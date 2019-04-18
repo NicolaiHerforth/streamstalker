@@ -81,11 +81,11 @@ async def on_member_update(before, after):
         curr_user = users[streamer]
         user_list = list(map(str, bot.users))
         indes = user_list.index(curr_user)
-        role = discord.utils.get(before.guild.roles, name="Live")
+        role = discord.utils.get(before.guild.roles, name="Twitch Live")
         member_list = [*bot.get_all_members()]
         member = member_list[indes]
         print(streamer, 'started streaming, go watch at twitch.tv/' + streamer)
-        role = discord.utils.get(before.guild.roles, name="Live")
+        role = discord.utils.get(before.guild.roles, name="Twitch Live")
         await member.add_roles(role)
 
         channel_gen = [*bot.get_all_channels()]
@@ -102,11 +102,11 @@ async def on_member_update(before, after):
         curr_user = users[streamer]
         user_list = list(map(str, bot.users))
         indes = user_list.index(curr_user)
-        role = discord.utils.get(before.guild.roles, name="Live")
+        role = discord.utils.get(before.guild.roles, name="Twitch Live")
         member_list = [*bot.get_all_members()]
         member = member_list[indes]
 
-        role = discord.utils.get(before.guild.roles, name="Live")
+        role = discord.utils.get(before.guild.roles, name="Twitch Live")
         try: 
             await member.remove_roles(role)
         except AttributeError:
@@ -190,4 +190,4 @@ async def on_message(message):
         
             
 
-bot.run(token)
+    bot.run(token)
