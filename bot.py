@@ -155,6 +155,4 @@ async def on_message(message):
                 embed.add_field(name="!setchannel", value="Sets what channel StreamStalker should work in")
                 await message.channel.send(content=None, embed=embed)
 
-
-#bot.run('NTY4MTMwOTY3MDY4MjEzMjg3.XLfUgA.LTV3cY7EOvnHeW5oYJ2oDxvYz0o')
 bot.run(token)
