@@ -138,13 +138,16 @@ async def on_message(message):
         return
     elif str(message.channel) in channels:
         if message.content.startswith('!addstreamer'):
-            try:
-                await message.channel.send(f'Adding streamer {message.content.split()[1]}')
-                with open(f'usrs/users-{message.guild.id}.txt','w') as user_file:
-                    users[message.content.split()[1]] = message.content.split()[2]
-                    json.dump(users, user_file)
-            except IndexError:
-                await message.channel.send("Remember to type twitch name first and then discord username!")
+            if message.content.split()[2][0] == '#':
+                await message.channel.send("Don't use mentions! Write the discord ID without the # at the start")
+            else:
+                try:
+                    await message.channel.send(f'Adding streamer {message.content.split()[1]}')
+                    with open(f'usrs/users-{message.guild.id}.txt','w') as user_file:
+                        users[message.content.split()[1]] = message.content.split()[2]
+                        json.dump(users, user_file)
+                except IndexError:
+                    await message.channel.send("Remember to type twitch name first and then discord username!")
 
         elif message.content.startswith('!streamers'):
             all_streamers = list(users.keys())
