@@ -138,8 +138,8 @@ async def on_message(message):
         return
     elif str(message.channel) in channels:
         if message.content.startswith('!addstreamer'):
-            if message.content.split()[2][0] == '@':
-                await message.channel.send("Don't use mentions! Write the discord ID without the @ at the start")
+            if message.content.split()[2] == member.mention:
+                await message.channel.send('Please dont use mentions. Remove the # before the discord ID')
             else:
                 try:
                     await message.channel.send(f'Adding streamer {message.content.split()[1]}')
