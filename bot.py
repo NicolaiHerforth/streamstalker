@@ -189,5 +189,4 @@ async def on_message(message):
             await message.channel.send(content=None, embed=embed)
         
             
-
-    bot.run(token)
+bot.run(token)
