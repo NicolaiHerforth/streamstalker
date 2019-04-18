@@ -7,7 +7,7 @@ from urllib.request import urlopen, Request
 
 
 token = os.environ.get('DISCORD_TOKEN')
-authozed_keys = os.environ.get('AUTHORIZED_KEYS')
+authorized_keys = os.environ.get('AUTHORIZED_KEYS')
 bot = discord.Client()
 game = discord.Game("Spying on streamers!")
 
