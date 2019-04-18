@@ -61,6 +61,8 @@ async def on_ready():
 
     
     await bot.change_presence(status=discord.Status.idle, activity=game)
+    print()
+    print()
 
 
 
@@ -74,66 +76,103 @@ async def on_member_update(before, after):
     
     with open(f'channels/channel-{before.guild.id}.txt', 'r') as channel_file:
         channel = channel_file.read().split('\n')[0]
+    
     if str(before.name) == 'StreamStalker':
         pass
     elif hasattr(after.activity, 'twitch_name') and not hasattr(before.activity, 'twitch_name'):
-        streamer = after.activity.twitch_name
-        curr_user = users[streamer]
-        user_list = list(map(str, bot.users))
-        indes = user_list.index(curr_user)
-        role = discord.utils.get(before.guild.roles, name="Twitch Live")
-        member_list = [*bot.get_all_members()]
-        member = member_list[indes]
-        print(streamer, 'started streaming, go watch at twitch.tv/' + streamer)
-        role = discord.utils.get(before.guild.roles, name="Twitch Live")
-        await member.add_roles(role)
+        guild_id = before.guild.id
+        if after.activity.twitch_name in users:
+            try:
+                print('Authorized User Found', users[after.activity.twitch_name])
+                streamer = after.activity.twitch_name
+                curr_user = users[streamer]
+                user_list = bot.users
 
-        channel_gen = [*bot.get_all_channels()]
-        channel_list = list(map(str, channel_gen))
-        channel_index = channel_list.index(channel)
-        tar_channel = channel_gen[channel_index]
-        await tar_channel.send(f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>')
+                user_list_str = list(map(str, bot.users))
+                
+                indes = user_list_str.index(curr_user)
+                user_id = user_list[indes].id
+                #user_list = list(map(str, bot.users))
+
+                member_list = [*bot.get_all_members()]
+                for mber in member_list:
+                    if mber.id == user_id and mber.guild.id == guild_id:
+                        member = mber
+                    else:
+                        continue
+                print(streamer, 'started streaming, go watch at twitch.tv/' + streamer)
+                role = discord.utils.get(after.guild.roles, name="Twitch Live")
+                await member.add_roles(role)
+                # except discord.errors.NotFound:
+                #     print(before.guild.roles)
+                #     print(role)
+
+                channel_gen = [*bot.get_all_channels()]
+                channel_list = list(map(str, channel_gen))
+                channel_index = channel_list.index(channel)
+                tar_channel = channel_gen[channel_index]
+                await tar_channel.send(f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>')
+            except KeyError:
+                print('User is not an authorized streamer')
+        else:
+            print('User is not an authorized streamer')
 
         
 
     
     elif hasattr(before.activity, 'twitch_name') and not hasattr(after.activity, 'twitch_name'):
-        streamer = before.activity.twitch_name
-        curr_user = users[streamer]
-        user_list = list(map(str, bot.users))
-        indes = user_list.index(curr_user)
-        role = discord.utils.get(before.guild.roles, name="Twitch Live")
-        member_list = [*bot.get_all_members()]
-        member = member_list[indes]
+        guild_id = before.guild.id
+        if before.activity.twitch_name in users:
+            try:
+                streamer = before.activity.twitch_name
+                curr_user = users[streamer]
+                user_list = bot.users
 
-        role = discord.utils.get(before.guild.roles, name="Twitch Live")
-        try: 
-            await member.remove_roles(role)
-        except AttributeError:
-            pass
+                user_list_str = list(map(str, bot.users))
+                
+                indes = user_list_str.index(curr_user)
+                user_id = user_list[indes].id
+                member_list = [*bot.get_all_members()]
+                for mber in member_list:
+                    if mber.id == user_id and mber.guild.id == guild_id:
+                        print('Found member', mber.name)
+                        member = mber
+                        break
+                    else:
+                        continue
+                
+                role = discord.utils.get(before.guild.roles, name="Twitch Live")
+                await member.remove_roles(role)
+                # except discord.errors.NotFound:
+                #     print(before.guild.roles)
+                #     print(role)
 
-        channel_gen = [*bot.get_all_channels()]
-        channel_list = list(map(str, channel_gen))
-        channel_index = channel_list.index(channel)
-        tar_channel = channel_gen[channel_index]
-        flattened =  await tar_channel.history(limit=20).flatten()
-        msg_idx = []
-        for message in flattened:
-            if f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>' == message.content:
-                msg_idx.append(flattened.index(message))
+                channel_gen = [*bot.get_all_channels()]
+                channel_list = list(map(str, channel_gen))
+                channel_index = channel_list.index(channel)
+                tar_channel = channel_gen[channel_index]
+                flattened =  await tar_channel.history(limit=50).flatten()
+                msg_idx = []
 
-        for idx in msg_idx:
-            await flattened[idx].delete()
+                for message in flattened:
+                    if f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>' == message.content:
+                        msg_idx.append(flattened.index(message))
+
+                for idx in msg_idx:
+                    await flattened[idx].delete()
+            except KeyError:
+                print('Not authorized Streamer, ignoring')
 
 
 @bot.event
 async def on_message(message):
+    
     with open(f'usrs/users-{message.guild.id}.txt', 'r') as user_file:
         users = json.loads(user_file.read())
 
     with open(f'channels/channel-{message.guild.id}.txt', 'r') as channel_file:
         channels = channel_file.read().split('\n')
-    
+
     if message.author == bot.user:
         return
     elif str(message.channel) in channels:
@@ -147,6 +186,8 @@ async def on_message(message):
                     with open(f'usrs/users-{message.guild.id}.txt','w') as user_file:
                         users[message.content.split()[1]] = message.content.split()[2]
                         json.dump(users, user_file)
+                    print(f'{message.content.split()[1]} added, all users are now {users.items()}')
+                    print(f'Keys are {users.keys()}')
                 except IndexError:
                     await message.channel.send("Remember to type twitch name first and then discord username!")
 
@@ -154,6 +195,11 @@ async def on_message(message):
             all_streamers = list(users.keys())
             await message.channel.send(f'All streamers connected are:\n{all_streamers}')
                 
+        elif message.content.startswith('!streamer'):
+            try:
+                await message.channel.send(f'Discord username connected with {message.content.split()[1]} is {users[message.content.split()[1]]}')
+            except KeyError:
+                await message.channel.send(f'Streamer not authorized')
         elif message.content.startswith('!setchannel'):
 
             channel_gen = [*bot.get_all_channels()]
