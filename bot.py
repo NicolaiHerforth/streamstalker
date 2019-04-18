@@ -11,7 +11,26 @@ game = discord.Game("Spying on streamers!")
 
 @bot.event
 async def on_guild_join(guild):
-    print(guild.name)
+    print('New Server!:', guild.name)
+    if not os.path.isfile(f'usrs/users-{guild.id}.txt'):
+        print(f'User file does not exist, creating for {guild.name}')
+        users = {}
+        with open(f'usrs/users-{guild.id}.txt', 'w+') as user_file:
+                json.dump(users, user_file)
+    else:
+        print(f'Userfile for {guild.name} exists')
+    if not os.path.isfile(f'channels/channel-{guild.id}.txt'):
+        print(f'Channel file on {guild.name} file does not exist, creating file for {guild.name}')
+        channel = 'general' 
+        with open(f'channels/channel-{guild.id}.txt', 'w+') as channel_file:
+            channel_file.write(channel)
+    else:
+        print(f'Channel file for {guild.name} exists')
+
+    print()
+    print()
+    print()
+    
 
 #users = {"thezephan": "Zephan#0001", "calioqt": "caliotest#8702"}
 
@@ -49,7 +68,7 @@ async def on_ready():
 
 @bot.event  
 async def on_member_update(before, after):
-    print(f'{after.name} changed status with the activity', after.activity)
+
     with open(f'usrs/users-{before.guild.id}.txt', 'r') as user_file:
         users = json.loads(user_file.read())
     
@@ -105,8 +124,6 @@ async def on_member_update(before, after):
 
         for idx in msg_idx:
             await flattened[idx].delete()
-    print()
-    print()
 
 
 @bot.event
@@ -148,11 +165,29 @@ async def on_message(message):
                 with open(f'channels/channel-{message.guild.id}.txt', 'w') as channel_file:
                     channel_file.write(new_channel)
                 print(f'Current channel is {new_channel}')
+        elif message.content.startswith('!removestreamer'):
+            if len(message.content.split()) > 2:
+                await message.channel.send('Remember to only add 1 user, which is the twitch name')
+            else:
+                streamer_of_interest = message.content.split()[1]
+                if streamer_of_interest in users:
+                    await message.channel.send(f'Removing streamer {streamer_of_interest}')
+                    del users[streamer_of_interest]
+                    with open(f'usrs/users-{message.guild.id}.txt','w') as user_file:
+                        json.dump(users, user_file)
+
+                else:
+                    await message.channel.send(f'Streamer {streamer_of_interest} is not an authorized streamer')
+
+
         elif message.content.startswith('!sscommands'):
-                embed = discord.Embed(title="Commands for StreamStalker", description="Some useful commands")
-                embed.add_field(name="!addstreamer", value="Adds streamer to the list of streamers")
-                embed.add_field(name="!streamers", value="Lists all current registered streamers")
-                embed.add_field(name="!setchannel", value="Sets what channel StreamStalker should work in")
-                await message.channel.send(content=None, embed=embed)
+            embed = discord.Embed(title="Commands for StreamStalker", description="Some useful commands")
+            embed.add_field(name="!addstreamer", value="Adds streamer to the list of streamers")
+            embed.add_field(name="!removestreamer", value="Removes streamer from the list of streamers")
+            embed.add_field(name="!streamers", value="Lists all current registered streamers")
+            embed.add_field(name="!setchannel", value="Sets what channel StreamStalker should work in")
+            await message.channel.send(content=None, embed=embed)
+        
+            
 
 bot.run(token)
