@@ -12,7 +12,7 @@ game = discord.Game("Spying on streamers!")
 with open('users.txt', 'r') as user_file:
    users = json.loads(user_file.read())
 
-users = {"thezephan": "Zephan#0001", "calioqt": "caliotest#8702"}
+#users = {"thezephan": "Zephan#0001", "calioqt": "caliotest#8702"}
 
 print('Users loaded, type of variable:', type(users))
 print(users)
