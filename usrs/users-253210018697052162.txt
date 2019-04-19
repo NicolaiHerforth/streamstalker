@@ -1,1 +1,1 @@
-{"thezephan": "Zephan#0001", "calioqt": "caliotest#8702"}
+{"thezephan": "Zephan#0001", "calioqt": "caliotest#8702", "ruzia_tv": "ruzai#1595"}
