@@ -20,7 +20,12 @@ print('Authorized servers are: \n', authorized_servers)
 
 @bot.event
 async def on_guild_join(guild):
-    
+    if str(guild.id) not in authorized_servers:
+        r = urlopen(authorized_keys).read().decode('utf8').split("\n")
+        for line in r:
+            if len(line) != 0:
+                if line not in authorized_servers:
+                    authorized_servers.append(str(line))
     if str(guild.id) in authorized_servers:
 
         print('Connected to new authorized server!:', guild.name)
@@ -41,6 +46,7 @@ async def on_guild_join(guild):
         print()
         print()
         print()
+    
     else:
         print(f'{guild.name} with id {guild.id} is not an authorized server')
         await bot.get_guild(guild.id).leave()
