@@ -62,6 +62,7 @@ async def on_guild_join(guild):
         if 'Twitch Live' in all_roles:
             print('Twitch Live rank exists, no change needed')
         else: 
+            print('Creating Twitch Live rank')
             await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
         print()
         print()
@@ -107,6 +108,7 @@ async def on_ready():
     if 'Twitch Live' in all_roles:
         print('Twitch Live rank exists, no change needed')
     else: 
+        print('Creating Twitch Live rank')
         await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
     # Change status to idle and set game status.
     await bot.change_presence(status=discord.Status.idle, activity=game)
