@@ -56,6 +56,12 @@ async def on_guild_join(guild):
                 channel_file.write(channel)
         else:
             print(f'Channel file for {guild.name} exists')
+
+        all_roles = map(lambda x: str(x.name()),guild.roles)  
+        if 'Twitch Live' in all_roles:
+            print('Twitch Live rank exists, no change needed')
+        else: 
+            await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
         print()
         print()
         print()
