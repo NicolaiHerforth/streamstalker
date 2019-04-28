@@ -102,6 +102,11 @@ async def on_ready():
         else:
             print(f'Channel file for {guild.name} exists')
 
+    all_roles = map(lambda x: str(x.name()),guild.roles)  
+        if 'Twitch Live' in all_roles:
+            print('Twitch Live rank exists, no change needed')
+        else: 
+            await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
     # Change status to idle and set game status.
     await bot.change_presence(status=discord.Status.idle, activity=game)
     print()
