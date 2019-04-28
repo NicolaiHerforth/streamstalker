@@ -8,7 +8,7 @@ from urllib.request import urlopen, Request
 
 
 # Global variables used throughout all methods
-token = os.environ.get('COACH_DISCORD_TOKEN')
+token = os.environ.get('ENGLISH_DISCORD_TOKEN')
 authorized_keys = os.environ.get('AUTHORIZED_KEYS')
 bot = discord.Client()
 game = discord.Game("Spying on streamers!")
