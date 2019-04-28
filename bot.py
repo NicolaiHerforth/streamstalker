@@ -333,12 +333,12 @@ async def on_message(message):
         elif message.content.startswith('!sscommands'):
             print('commands has been called')
             embed = discord.Embed(title="Commands for StreamStalker", description="Some useful commands")
-            embed.add_field(name="!addstreamer", value="Adds streamer to the list of authorized streamers - !command twit$
-            embed.add_field(name="!removestreamer", value="Removes a streamer from the list of authorized streamers - !co$
-            embed.add_field(name="!streamers", value="Shows all authorized streamers - !command")
-            embed.add_field(name="!streamer", value="Shows the associated discord ID with the input twitch name - !comman$
-            embed.add_field(name="!setchannel", value="Sets the working channel for StreamStalker - !command channelname")
-            embed.add_field(name="!sspurge", value="Deletes selected number of messages from channel - !command messageco$
+            embed.add_field(name="!addstreamer", value="Adds streamer to the list of streamers - !command twitchname discordid")
+            embed.add_field(name="!removestreamer", value="Removes streamer from the list of streamers - !command twitchname")
+            embed.add_field(name="!streamers", value="Lists all current registered streamers - !command")
+            embed.add_field(name="!streamer", value="Lists associated discord ID with mentioned streamer - !command twitchname")
+            embed.add_field(name="!setchannel", value="Sets what channel StreamStalker should work in !command channelname")
+            embed.add_field(name="!sspurge", value="Deletes selected number of messages from channel - !command messagecount")
             await message.channel.send(content=None, embed=embed)
         
             
