@@ -25,6 +25,7 @@ print('Authorized servers are: \n', authorized_servers)
 # Guild joining server
 @bot.event
 async def on_guild_join(guild):
+    authorized_keys = os.environ.get('AUTHORIZED_KEYS')
     users_filepath = f'{cwd}/usrs/users-{guild.id}.txt'
     channels_filepath = f'{cwd}/channels/channel-{guild.id}.txt'
 
@@ -332,12 +333,12 @@ async def on_message(message):
         elif message.content.startswith('!sscommands'):
             print('commands has been called')
             embed = discord.Embed(title="Commands for StreamStalker", description="Some useful commands")
-            embed.add_field(name="!addstreamer", value="Tilføj streamer til listen over autoriserede streamers - !command twitchname discordid")
-            embed.add_field(name="!removestreamer", value="Fjerner en streamer fra listen af autoriserede streamers - !command twitchname")
-            embed.add_field(name="!streamers", value="Viser alle autoriserede streamers - !command")
-            embed.add_field(name="!streamer", value="Viser det associerede discord ID med nævnte streamer - !command twitchname")
-            embed.add_field(name="!setchannel", value="Indstiller den indtastede channel til at være aktuel channel StreamStalker skal virke i - !command channelname")
-            embed.add_field(name="!sspurge", value="Deletes selected number of messages from channel - !command messagecount")
+            embed.add_field(name="!addstreamer", value="Adds streamer to the list of authorized streamers - !command twit$
+            embed.add_field(name="!removestreamer", value="Removes a streamer from the list of authorized streamers - !co$
+            embed.add_field(name="!streamers", value="Shows all authorized streamers - !command")
+            embed.add_field(name="!streamer", value="Shows the associated discord ID with the input twitch name - !comman$
+            embed.add_field(name="!setchannel", value="Sets the working channel for StreamStalker - !command channelname")
+            embed.add_field(name="!sspurge", value="Deletes selected number of messages from channel - !command messageco$
             await message.channel.send(content=None, embed=embed)
         
             
