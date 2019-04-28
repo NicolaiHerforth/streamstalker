@@ -102,7 +102,8 @@ async def on_ready():
         else:
             print(f'Channel file for {guild.name} exists')
 
-    all_roles = map(lambda x: str(x.name,guild.roles)  
+    all_roles = map(lambda x: str(x.name,guild.roles))  
+
     if 'Twitch Live' in all_roles:
         print('Twitch Live rank exists, no change needed')
     else: 
