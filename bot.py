@@ -18,6 +18,9 @@ cwd = sys.path[0]
 authorized_servers = []
 r = urlopen(authorized_keys).read().decode('utf8').split("\n")
 authorized_servers = [str(line) for line in r if len(line) !=0]
+# for line in r:
+#     if len(line) != 0:
+#         authorized_servers.append(str(line))
 
 
 
@@ -31,11 +34,10 @@ async def on_guild_join(guild):
     # Check if server is authorized, if it isn't, check if it's been added since start of the bot.
     if str(guild.id) not in authorized_servers:
         r = urlopen(authorized_keys).read().decode('utf8').split("\n")
-        authorized_servers = [str(line) for line in r if len(line) != 0 if line not in authorized_servers]
-        # for line in r:
-        #     if len(line) != 0:
-        #         if line not in authorized_servers:
-        #             authorized_servers.append(str(line))
+        for line in r:
+            if len(line) != 0:
+                if line not in authorized_servers:
+                    authorized_servers.append(str(line))
     # Check if it's then authorized after previous check.
     if str(guild.id) in authorized_servers:
         
