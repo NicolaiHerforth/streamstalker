@@ -22,7 +22,8 @@ authorized_servers = [str(line) for line in r if len(line) !=0]
 #     if len(line) != 0:
 #         authorized_servers.append(str(line))
 print('Authorized servers are: \n')
-servers = map(print(x.name), bot.get_guild(authorized_servers))
+servers = map(lambda x: x.name, bot.get_guild(authorized_servers))
+print(servers)
 
 
 # Guild joining server
