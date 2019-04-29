@@ -17,7 +17,7 @@ cwd = sys.path[0]
 # Server authentication load
 authorized_servers = []
 r = urlopen(authorized_keys).read().decode('utf8').split("\n")
-authorized_servers = [str(line) for line in r if len(line !=0)]
+authorized_servers = [str(line) for line in r if len(line) !=0]
 # for line in r:
 #     if len(line) != 0:
 #         authorized_servers.append(str(line))
