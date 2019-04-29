@@ -1,10 +1,12 @@
 import discord
-import logging, json, sys, os
+import logging
+import json
+import sys
+import os
 import _pickle as pickle
 import time
 from dict import DictionaryReader
 from urllib.request import urlopen, Request
-
 
 
 # Global variables used throughout all methods
@@ -17,11 +19,7 @@ cwd = sys.path[0]
 # Server authentication load
 authorized_servers = []
 r = urlopen(authorized_keys).read().decode('utf8').split("\n")
-authorized_servers = [str(line) for line in r if len(line) !=0]
-# for line in r:
-#     if len(line) != 0:
-#         authorized_servers.append(str(line))
-
+authorized_servers = [str(line) for line in r if len(line) != 0]
 
 
 # Guild joining server
@@ -38,46 +36,53 @@ async def on_guild_join(guild):
             if len(line) != 0:
                 if line not in authorized_servers:
                     authorized_servers.append(str(line))
+
     # Check if it's then authorized after previous check.
     if str(guild.id) in authorized_servers:
-        
         print('Connected to new authorized server!:', guild.name)
         # Create userfile if server hasn't been visited before.
         if not os.path.isfile(users_filepath):
             print(f'User file does not exist, creating for {guild.name}')
             users = {}
             with open(users_filepath, 'w+') as user_file:
-                    json.dump(users, user_file)
+                json.dump(users, user_file)
+
         else:
             print(f'Userfile for {guild.name} exists')
 
         # Create channelfile if server hasn't been visited before.
         if not os.path.isfile(channels_filepath):
-            print(f'Channel file on {guild.name} file does not exist, creating file for {guild.name}')
-            channel = 'general' 
+            print(
+                f'Channel file on {guild.name} file does not exist, creating file for {guild.name}')
+            channel = 'general'
             with open(channels_filepath, 'w+') as channel_file:
                 channel_file.write(channel)
+
         else:
             print(f'Channel file for {guild.name} exists')
 
-        all_roles = map(lambda x: str(x.name),guild.roles)  
+        all_roles = map(lambda x: str(x.name), guild.roles)
         if 'Twitch Live' in all_roles:
             print('Twitch Live rank exists, no change needed')
-        else: 
+        else:
             print('Creating Twitch Live rank')
             await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
+
         print()
         print()
         print()
+
     # Leave server if the server is not authorized.
     else:
         print(f'{guild.name} with id {guild.id} is not an authorized server')
         await bot.get_guild(guild.id).leave()
 
 # Bot loading ready status.
+
+
 @bot.event
 async def on_ready():
-    
+
     # Check all servers
     all_guilds = []
     global users
@@ -88,7 +93,7 @@ async def on_ready():
     for guild in all_guilds:
         users_filepath = f'{cwd}/usrs/users-{guild.id}.txt'
         channels_filepath = f'{cwd}/channels/channel-{guild.id}.txt'
-    
+
         if not os.path.isfile(users_filepath):
             print(f'User file does not exist, creating for {guild.name}')
             users = {}
@@ -98,18 +103,19 @@ async def on_ready():
             print(f'Userfile for {guild.name} exists')
 
         if not os.path.isfile(channels_filepath):
-            print(f'Channel file on {guild.name} file does not exist, creating file for {guild.name}')
-            channel = 'general' 
+            print(
+                f'Channel file on {guild.name} file does not exist, creating file for {guild.name}')
+            channel = 'general'
             with open(channels_filepath, 'w+') as channel_file:
                 channel_file.write(channel)
         else:
             print(f'Channel file for {guild.name} exists')
 
-        all_roles = map(lambda x: str(x.name),guild.roles)
+        all_roles = map(lambda x: str(x.name), guild.roles)
 
         if 'Twitch Live' in all_roles:
             print(f'Twitch Live rank exists in {guild.name}, no change needed')
-        else: 
+        else:
             print(f'Creating Twitch Live rank for {guild.name}')
             await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
 
@@ -123,38 +129,37 @@ async def on_ready():
     print()
 
 
-
-
 # Member changing status event
-@bot.event  
+@bot.event
 async def on_member_update(before, after):
     users_filepath = f'{cwd}/usrs/users-{before.guild.id}.txt'
     channels_filepath = f'{cwd}/channels/channel-{before.guild.id}.txt'
-    
+
     # Load all users and channels
     with open(users_filepath, 'r') as user_file:
         users = json.loads(user_file.read())
-    
+
     with open(channels_filepath, 'r') as channel_file:
         channel = channel_file.read().split('\n')[0]
-    
+
     # If the change is made by the bot, ignore
     if str(before.name) == 'StreamStalker':
         pass
-    
+
     # check if the activity change is to start stream
     elif hasattr(after.activity, 'twitch_name') and not hasattr(before.activity, 'twitch_name'):
         guild_id = before.guild.id
         if after.activity.twitch_name in users:
             # Check if user is an authorized streamer from users file for given server.
             try:
-                print('Authorized User Found', users[after.activity.twitch_name])
+                print('Authorized User Found',
+                      users[after.activity.twitch_name])
                 streamer = after.activity.twitch_name
                 curr_user = users[streamer]
                 user_list = bot.users
 
                 user_list_str = list(map(str, bot.users))
-                
+
                 indes = user_list_str.index(curr_user)
                 user_id = user_list[indes].id
                 print(user_id)
@@ -170,7 +175,7 @@ async def on_member_update(before, after):
                 # Assign Twitch Live Role to streaming user
                 role = discord.utils.get(after.guild.roles, name="Twitch Live")
                 await member.add_roles(role)
-                
+
                 # Send message to set channel about user going live
                 channel_gen = [*bot.get_all_channels()]
                 channel_list = list(map(str, channel_gen))
@@ -178,17 +183,18 @@ async def on_member_update(before, after):
                 tar_channel = channel_gen[channel_index]
                 await tar_channel.send(f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>')
 
-                embed = discord.Embed(title=f"{member.name}'s stream.", description="")
-                embed.add_field(name="Titel:", value=f"{after.activity.name}", inline=False)
-                embed.add_field(name="Spil:", value=f"{after.activity.details}", inline=False)
+                embed = discord.Embed(
+                    title=f"{member.name}'s stream.", description="")
+                embed.add_field(
+                    name="Titel:", value=f"{after.activity.name}", inline=False)
+                embed.add_field(
+                    name="Spil:", value=f"{after.activity.details}", inline=False)
                 await tar_channel.send(content=None, embed=embed)
             # If user isn't authorized, don't execute.
             except KeyError:
                 print('User is not an authorized streamer')
         else:
             print('User is not an authorized streamer')
-
-        
 
     # Check if transition is from streaming to stopped stream.
     elif hasattr(before.activity, 'twitch_name') and not hasattr(after.activity, 'twitch_name'):
@@ -201,7 +207,7 @@ async def on_member_update(before, after):
                 user_list = bot.users
 
                 user_list_str = list(map(str, bot.users))
-                
+
                 indes = user_list_str.index(curr_user)
                 user_id = user_list[indes].id
                 member_list = [*bot.get_all_members()]
@@ -214,7 +220,8 @@ async def on_member_update(before, after):
                     else:
                         continue
                 # Remove live role from user.
-                role = discord.utils.get(before.guild.roles, name="Twitch Live")
+                role = discord.utils.get(
+                    before.guild.roles, name="Twitch Live")
                 await member.remove_roles(role)
 
                 # Remove live message posted previously for user.
@@ -222,7 +229,7 @@ async def on_member_update(before, after):
                 channel_list = list(map(str, channel_gen))
                 channel_index = channel_list.index(channel)
                 tar_channel = channel_gen[channel_index]
-                flattened =  await tar_channel.history(limit=50).flatten()
+                flattened = await tar_channel.history(limit=50).flatten()
                 msg_idx = []
                 # Look through message history and delete message(s) if it exists
                 for message in flattened:
@@ -238,6 +245,8 @@ async def on_member_update(before, after):
                 print('Not authorized Streamer, ignoring')
 
 # Check message sent in set channel
+
+
 @bot.event
 async def on_message(message):
     users_filepath = f'{cwd}/usrs/users-{message.guild.id}.txt'
@@ -253,7 +262,7 @@ async def on_message(message):
     # If the message is created by the bot, ignore.
     if message.author == bot.user:
         return
-    # 
+    #
     elif str(message.channel) in channels:
         # Check start of messages if they contain sscommands command.
         if message.content.startswith('!addstreamer'):
@@ -266,12 +275,13 @@ async def on_message(message):
                 try:
                     await message.channel.send(f'Adding streamer {message.content.split()[1]}')
                     # Write to user file
-                    with open(users_filepath,'w') as user_file:
+                    with open(users_filepath, 'w') as user_file:
                         disc_id_list = message.content.split()[2:]
                         disc_id = " ".join(disc_id_list)
                         users[message.content.split()[1]] = disc_id
                         json.dump(users, user_file)
-                    print(f'{message.content.split()[1]} added, all users in {message.author.guild} are now {users.items()}')
+                    print(
+                        f'{message.content.split()[1]} added, all users in {message.author.guild} are now {users.items()}')
                     print(f'Keys are {users.keys()}')
                 # Check that the amount of arguments are correct.
                 except IndexError:
@@ -319,7 +329,7 @@ async def on_message(message):
                 if streamer_of_interest in users:
                     await message.channel.send(f'Removing streamer {streamer_of_interest}')
                     del users[streamer_of_interest]
-                    with open(users_filepath,'w') as user_file:
+                    with open(users_filepath, 'w') as user_file:
                         json.dump(users, user_file)
                 # else let user know the streamer/user doesnt exist
                 else:
@@ -330,31 +340,38 @@ async def on_message(message):
             msg_len = len(message.content.split())
             if msg_len == 1:
                 await message.channel.send('Remember to add the amount of message to be deleted.')
-            elif msg_len== 2:
+            elif msg_len == 2:
                 purged = False
                 if purged == False:
                     print('Purging')
                     number_of_messages = int(message.content.split()[1])
                     await message.channel.send(f'Deleting {number_of_messages} messages.')
                     time.sleep(3)
-                    await message.channel.purge(limit=number_of_messages+2)
+                    await message.channel.purge(limit=number_of_messages + 2)
                     purged = True
                     print('Purged', purged)
-                        
+
             else:
                 await message.channel.send('Too many arguments, format for command: !command count')
 
-        # List all commands 
+        # List all commands
         elif message.content.startswith('!sscommands'):
             print('commands has been called')
-            embed = discord.Embed(title="Commands for StreamStalker", description="Some useful commands")
-            embed.add_field(name="!addstreamer", value="Adds streamer to the list of streamers - !command twitchname discordid")
-            embed.add_field(name="!removestreamer", value="Removes streamer from the list of streamers - !command twitchname")
-            embed.add_field(name="!streamers", value="Lists all current registered streamers - !command")
-            embed.add_field(name="!streamer", value="Lists associated discord ID with mentioned streamer - !command twitchname")
-            embed.add_field(name="!setchannel", value="Sets what channel StreamStalker should work in !command channelname")
-            embed.add_field(name="!sspurge", value="Deletes selected number of messages from channel - !command messagecount")
+            embed = discord.Embed(
+                title="Commands for StreamStalker", description="Some useful commands")
+            embed.add_field(
+                name="!addstreamer", value="Adds streamer to the list of streamers - !command twitchname discordid")
+            embed.add_field(
+                name="!removestreamer", value="Removes streamer from the list of streamers - !command twitchname")
+            embed.add_field(
+                name="!streamers", value="Lists all current registered streamers - !command")
+            embed.add_field(
+                name="!streamer", value="Lists associated discord ID with mentioned streamer - !command twitchname")
+            embed.add_field(
+                name="!setchannel", value="Sets what channel StreamStalker should work in !command channelname")
+            embed.add_field(
+                name="!sspurge", value="Deletes selected number of messages from channel - !command messagecount")
             await message.channel.send(content=None, embed=embed)
-        
-            
+
+
 bot.run(token)
