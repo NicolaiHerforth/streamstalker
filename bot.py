@@ -22,7 +22,7 @@ authorized_servers = [str(line) for line in r if len(line) !=0]
 #     if len(line) != 0:
 #         authorized_servers.append(str(line))
 print('Authorized servers are: \n')
-servers = list(map(lambda x: print(x), authorized_servers))
+servers = list(map(lambda x: print(str(x)), authorized_servers))
 print('lol')
 
 
