@@ -113,8 +113,8 @@ async def on_ready():
             print(f'Creating Twitch Live rank for {guild.name}')
             await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
     print('Authorized servers are: \n')
-    print(bot.guilds.get('565299742435967006'))
-    servers = list(map(lambda x: bot.get_guild(x), authorized_servers))
+    
+    servers = [x.name for x in bot.guilds if str(x.id) in authorized_servers]
     print(servers)
     # Change status to idle and set game status.
     await bot.change_presence(status=discord.Status.idle, activity=game)
