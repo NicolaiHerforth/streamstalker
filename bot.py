@@ -22,7 +22,10 @@ authorized_servers = [str(line) for line in r if len(line) !=0]
 #     if len(line) != 0:
 #         authorized_servers.append(str(line))
 
+print('Authorized servers are: \n')
 
+servers = [x.name for x in bot.guilds if str(x.id) in authorized_servers]
+print(servers)
 
 # Guild joining server
 @bot.event
@@ -112,10 +115,7 @@ async def on_ready():
         else: 
             print(f'Creating Twitch Live rank for {guild.name}')
             await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
-    print('Authorized servers are: \n')
-    
-    servers = [x.name for x in bot.guilds if str(x.id) in authorized_servers]
-    print(servers)
+
     # Change status to idle and set game status.
     await bot.change_presence(status=discord.Status.idle, activity=game)
     print()
