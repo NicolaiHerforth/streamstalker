@@ -18,14 +18,7 @@ cwd = sys.path[0]
 authorized_servers = []
 r = urlopen(authorized_keys).read().decode('utf8').split("\n")
 authorized_servers = [str(line) for line in r if len(line) !=0]
-# for line in r:
-#     if len(line) != 0:
-#         authorized_servers.append(str(line))
 
-print('Authorized servers are: \n')
-
-servers = [x.name for x in bot.guilds if str(x.id) in authorized_servers]
-print(servers)
 
 # Guild joining server
 @bot.event
@@ -37,10 +30,13 @@ async def on_guild_join(guild):
     # Check if server is authorized, if it isn't, check if it's been added since start of the bot.
     if str(guild.id) not in authorized_servers:
         r = urlopen(authorized_keys).read().decode('utf8').split("\n")
-        for line in r:
-            if len(line) != 0:
-                if line not in authorized_servers:
-                    authorized_servers.append(str(line))
+        authorized_servers = [str(line) for line in r if line != 0 if line not in authorized_servers]
+        print('done doing shit')
+        # for line in r:
+        #     if len(line) != 0:
+        #         if line not in authorized_servers:
+        #             authorized_servers.append(str(line))
+
     # Check if it's then authorized after previous check.
     if str(guild.id) in authorized_servers:
         
@@ -116,6 +112,10 @@ async def on_ready():
             print(f'Creating Twitch Live rank for {guild.name}')
             await guild.create_role(name="Twitch Live", hoist=True, reason="Role for showing live twitch users")
 
+    # Print all verified servers that this bot is connected to.
+    print('Authorized servers are:')
+    servers = [x.name for x in bot.guilds if str(x.id) in authorized_servers]
+    print(servers)
     # Change status to idle and set game status.
     await bot.change_presence(status=discord.Status.idle, activity=game)
     print()
