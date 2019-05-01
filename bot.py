@@ -201,6 +201,8 @@ async def on_member_update(before, after):
         guild_id = before.guild.id
         # Check if authorized user
         if before.activity.twitch_name in users:
+            print(before.name)
+            print(users)
             try:
                 streamer = before.activity.twitch_name
                 curr_user = users[streamer]
