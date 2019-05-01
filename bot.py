@@ -266,6 +266,26 @@ async def on_message(message):
     elif message.content.startswith('!sschannel'):
         await message.channel.send(f'Working channel is {channels[0]}')
         print(message.author.guild_permissions.administrator)
+    
+    elif message.content.startswith('!setchannel'):
+        if message.author.guild_permissions.administrator:
+            channel_gen = [*bot.get_all_channels()]
+            channel_list = list(map(str, channel_gen))
+            new_channel_list = message.content.split()[1:]
+            # check for spaces in text channel
+            new_channel = '\u2009\u2009'.join(map(str, new_channel_list))
+            # If channel doesn't exist tell user to check spelling
+            if new_channel not in channel_list:
+                await message.channel.send(f'{new_channel} does not exist, please make sure the channel name is correct!')
+            # Else change to channel provided by user
+            else:
+                await message.channel.send(f'Working channel set to {new_channel}')
+                with open(channels_filepath, 'w') as channel_file:
+                    channel_file.write(new_channel)
+                print(f'Current channel is {new_channel}')
+        else:
+            await message.channel.send(f"{message.author.name} is not an admin. Channel wasn't changed.")
+
     elif str(message.channel) in channels:
         # Check start of messages if they contain sscommands command.
         if message.content.startswith('!addstreamer'):
@@ -305,21 +325,7 @@ async def on_message(message):
             except KeyError:
                 await message.channel.send(f'Streamer not authorized')
         # Set which channel the bot should work in.
-        elif message.content.startswith('!setchannel'):
-            channel_gen = [*bot.get_all_channels()]
-            channel_list = list(map(str, channel_gen))
-            new_channel_list = message.content.split()[1:]
-            # check for spaces in text channel
-            new_channel = '\u2009\u2009'.join(map(str, new_channel_list))
-            # If channel doesn't exist tell user to check spelling
-            if new_channel not in channel_list:
-                await message.channel.send(f'{new_channel} does not exist, please make sure the channel name is correct!')
-            # Else change to channel provided by user
-            else:
-                await message.channel.send(f'Working channel set to {new_channel}')
-                with open(channels_filepath, 'w') as channel_file:
-                    channel_file.write(new_channel)
-                print(f'Current channel is {new_channel}')
+
         # Remove a streamer/user from authorized streamers
         elif message.content.startswith('!removestreamer'):
             # Check argument length
