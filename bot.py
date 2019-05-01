@@ -265,7 +265,7 @@ async def on_message(message):
     #
     elif message.content.startswith('!sschannel'):
         await message.channel.send(f'Working channel is {channels[0]}')
-        print(message.author.server_permissions.administrator)
+        print(message.author.guild_permissions)
     elif str(message.channel) in channels:
         # Check start of messages if they contain sscommands command.
         if message.content.startswith('!addstreamer'):
