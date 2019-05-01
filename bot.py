@@ -149,7 +149,7 @@ async def on_member_update(before, after):
     # check if the activity change is to start stream
     elif hasattr(after.activity, 'twitch_name') and not hasattr(before.activity, 'twitch_name'):
         guild_id = before.guild.id
-        if after.activity.twitch_name in users and after.guild.id == guild_id:
+        if after.activity.twitch_name in users:
             # Check if user is an authorized streamer from users file for given server.
             try:
                 print('Authorized User Found',
@@ -183,7 +183,8 @@ async def on_member_update(before, after):
                 tar_channel = channel_gen[channel_index]
                 print(f'Posting in {channel} on server {before.guild.name}')
                 print(f'Tar channel is currently {tar_channel} on {before.guild.name}')
-                await tar_channel.send(f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>')
+                if before.guild.id == guild_id:
+                    await tar_channel.send(f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>')
 
                 embed = discord.Embed(
                     title=f"{member.name}'s stream.", description="")
