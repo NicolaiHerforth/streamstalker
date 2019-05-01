@@ -181,6 +181,8 @@ async def on_member_update(before, after):
                 channel_list = list(map(str, channel_gen))
                 channel_index = channel_list.index(channel)
                 tar_channel = channel_gen[channel_index]
+                print(f'Posting in {channel} on server {before.guild.name}')
+                print(f'Tar channel is currently {tar_channel} on {before.guild.name}')
                 await tar_channel.send(f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>')
 
                 embed = discord.Embed(
@@ -236,7 +238,7 @@ async def on_member_update(before, after):
                 flattened = await tar_channel.history(limit=50).flatten()
                 msg_idx = []
                 # Look through message history and delete message(s) if it exists
-                print(f'trying to remove from {channel}')
+                print(f'Removing post from {channel} on server {before.guild.name}')
                 for message in flattened:
                     if f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>' == message.content:
                         msg_idx.append(flattened.index(message))
