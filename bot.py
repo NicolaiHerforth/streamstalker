@@ -233,7 +233,7 @@ async def on_member_update(before, after):
                 msg_idx = []
                 # Look through message history and delete message(s) if it exists
                 for message in flattened:
-                    if f'{member.mention} har startet sin stream! Se dem på <https://www.twitch.tv/{streamer}>' == message.content:
+                    if f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>' == message.content:
                         msg_idx.append(flattened.index(message))
                     for embed in message.embeds:
                         if embed.title == f"{member.name}'s stream.":
