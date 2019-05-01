@@ -232,7 +232,7 @@ async def on_member_update(before, after):
                 await member.remove_roles(role)
 
                 # Remove live message posted previously for user.
-                channel_gen = [*bot.get_all_channels()]
+                channel_gen = [*before.guild.channel]
                 channel_list = list(map(str, channel_gen))
                 channel_index = channel_list.index(channel)
                 tar_channel = channel_gen[channel_index]
