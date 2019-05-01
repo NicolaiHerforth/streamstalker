@@ -149,7 +149,7 @@ async def on_member_update(before, after):
     # check if the activity change is to start stream
     elif hasattr(after.activity, 'twitch_name') and not hasattr(before.activity, 'twitch_name'):
         guild_id = before.guild.id
-        if after.activity.twitch_name in users and after.activity.guild_id == guild_id:
+        if after.activity.twitch_name in users and after.guild_id == guild_id:
             # Check if user is an authorized streamer from users file for given server.
             try:
                 print('Authorized User Found',
