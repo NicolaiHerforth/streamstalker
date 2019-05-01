@@ -240,6 +240,7 @@ async def on_member_update(before, after):
                 msg_idx = []
                 # Look through message history and delete message(s) if it exists
                 print(f'Removing post from {channel} on server {before.guild.name}')
+                print(member.name)
                 for message in flattened:
                     if f'{member.mention} just started streaming. Go watch them at <https://www.twitch.tv/{streamer}>' == message.content:
                         msg_idx.append(flattened.index(message))
