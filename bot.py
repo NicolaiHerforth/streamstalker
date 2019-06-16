@@ -189,9 +189,9 @@ async def on_member_update(before, after):
                 embed = discord.Embed(
                     title=f"{member.name}'s stream.", description="")
                 embed.add_field(
-                    name="Titel:", value=f"{after.activity.name}", inline=False)
+                    name="Title:", value=f"{after.activity.name}", inline=False)
                 embed.add_field(
-                    name="Spil:", value=f"{after.activity.details}", inline=False)
+                    name="Game:", value=f"{after.activity.details}", inline=False)
                 await tar_channel.send(content=None, embed=embed)
             # If user isn't authorized, don't execute.
             except KeyError:
